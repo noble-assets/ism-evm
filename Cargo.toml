@@ -20,9 +20,9 @@ sp1-sdk   = "5.2.4"
 sp1-build = "5.2.4"
 
 # Helios
-helios                = { git = "https://github.com/a16z/helios", tag = "0.10.2" }
-helios-consensus-core = { git = "https://github.com/a16z/helios", tag = "0.10.2" }
-helios-ethereum       = { git = "https://github.com/a16z/helios", tag = "0.10.2" }
+helios                = { git = "https://github.com/a16z/helios", tag = "0.11.0" }
+helios-consensus-core = { git = "https://github.com/a16z/helios", tag = "0.11.0" }
+helios-ethereum       = { git = "https://github.com/a16z/helios", tag = "0.11.0" }
 
 # General
 alloy-sol-types  = "1.5.0"
