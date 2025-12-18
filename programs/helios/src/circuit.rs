@@ -77,8 +77,8 @@ pub fn verify_light_client_update(encoded_inputs: Vec<u8>) -> Vec<u8> {
         "New head is not greater than previous head."
     );
 
-    // Ensure that the we used a checkpoint slot for the new finalized header. Sanity check as otherwise
-    // finality update application would be broken.
+    // Sanity check: Ensure that the we used a checkpoint slot for the new finalized header. This is
+    // already verified in the finality update verification, but we double check here to be safe.
     assert!(
         store.finalized_header.beacon().slot.is_multiple_of(32),
         "New head is not a checkpoint slot."

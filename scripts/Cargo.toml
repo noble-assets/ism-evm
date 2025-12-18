@@ -1,9 +1,17 @@
 [package]
-name        = "scripts"
-version     = { workspace = true }
-edition     = { workspace = true }
-license     = { workspace = true }
-authors     = { workspace = true }
+name    = "scripts"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
 
 [build-dependencies]
 sp1-build = { workspace = true }
+
+[dependencies]
+anyhow                = { workspace = true }
+alloy-primitives      = { workspace = true }
+helios-consensus-core = { workspace = true }
+helios-ethereum       = { workspace = true }
+tokio                 = { workspace = true }
+tree_hash             = { workspace = true }

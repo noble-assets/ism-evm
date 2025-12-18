@@ -22,7 +22,7 @@ fn main() {
                 BuildArgs {
                     output_directory: Some(format!("{}/elf", program_path)),
                     docker: true,
-                    tag: "v5.2.3".to_string(),
+                    tag: "v5.2.4".to_string(),
                     ..Default::default()
                 },
             );
