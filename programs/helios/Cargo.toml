@@ -1,0 +1,22 @@
+[package]
+version           = "0.1.0"
+name              = "helios-program"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "helios-program"
+path = "src/main.rs"
+
+[dependencies]
+sp1-zkvm              = { workspace = true }
+helios-consensus-core = { workspace = true }
+serde_cbor            = { workspace = true }
+alloy-sol-types       = { workspace = true }
+alloy-primitives      = { workspace = true, features = ["sha3-keccak"] }
+tree_hash             = { workspace = true }
+primitives            = { workspace = true }

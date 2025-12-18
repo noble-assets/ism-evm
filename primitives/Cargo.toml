@@ -1,0 +1,9 @@
+[package]
+name    = "primitives"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+helios-consensus-core = { workspace = true }
+serde                 = { workspace = true }
+alloy-primitives      = { workspace = true }
