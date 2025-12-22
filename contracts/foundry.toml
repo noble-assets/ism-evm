@@ -1,0 +1,12 @@
+[profile.default]
+src       = "src"
+out       = "out"
+libs      = ["dependencies"]
+optimizer = true
+
+[dependencies]
+forge-std                             = "1.12.0"
+"@openzeppelin-contracts"             = "5.5.0"
+"@openzeppelin-contracts-upgradeable" = "5.5.0"
+succinctlabs-sp1-contracts            = { version = "5.0.0", git = "https://github.com/succinctlabs/sp1-contracts/", tag = "v5.0.0" }
+hyperlane                             = { version = "10.0.3", git = "https://github.com/hyperlane-xyz/hyperlane-monorepo/", tag = "@hyperlane-xyz/core@10.0.3" }

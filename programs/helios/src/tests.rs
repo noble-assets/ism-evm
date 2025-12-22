@@ -27,7 +27,7 @@ async fn setup_light_client_circuit_inputs(valid_checkpoint: bool) -> Input {
     let previous_finalized_slot = if valid_checkpoint {
         current_finalized_slot - 32 // Go back 1 epoch
     } else {
-        current_finalized_slot - 31 // Invalid: Not at checkpoint
+        current_finalized_slot - 20 // Invalid: Not at checkpoint
     };
 
     let client = get_client(

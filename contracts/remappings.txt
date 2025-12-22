@@ -1,0 +1,5 @@
+@openzeppelin-contracts-upgradeable/=dependencies/@openzeppelin-contracts-upgradeable-5.5.0/
+@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.5.0/
+forge-std/=dependencies/forge-std-1.12.0/
+hyperlane/=dependencies/hyperlane-10.0.3/solidity/contracts
+succinctlabs-sp1-contracts/=dependencies/succinctlabs-sp1-contracts-5.0.0/contracts

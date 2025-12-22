@@ -1,0 +1,8 @@
+# Compiler files
+broadcast/
+cache/
+out/
+bin/
+
+# Soldeer
+/dependencies

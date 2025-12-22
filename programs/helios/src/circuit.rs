@@ -8,22 +8,25 @@ use tree_hash::TreeHash;
 
 sol! {
     struct Output {
-        /// The previous beacon block header hash.
-        bytes32 prevHeader;
         /// The slot of the previous head.
         uint256 prevHead;
+        /// The previous beacon block header hash.
+        bytes32 prevHeader;
         /// The anchor sync committee hash which was used to verify the proof.
         bytes32 prevSyncCommitteeHash;
         /// The slot of the new head.
         uint256 newHead;
         /// The new beacon block header hash.
         bytes32 newHeader;
+        /// The sync committee hash of the current period.
+        bytes32 syncCommitteeHash;
+        /// The sync committee hash of the next period.
+        bytes32 nextSyncCommitteeHash;
         /// The execution state root from the execution payload of the new beacon block.
         bytes32 executionStateRoot;
         /// The execution block number.
         uint256 executionBlockNumber;
-        /// The sync committee hash of the current period.
-        bytes32 syncCommitteeHash;
+
     }
 }
 
@@ -32,7 +35,7 @@ sol! {
 /// 2. Apply finality update
 /// 3. Verify execution state root proof
 /// 4. Assert all updates are valid
-/// 5. Commit new state root, header, and sync committee for usage in the on-chain contract
+/// 5. Commit new state root, header, and sync committees for usage in the on-chain contract
 pub fn verify_light_client_update(encoded_inputs: Vec<u8>) -> Vec<u8> {
     // Decode the inputs
     let Input {
@@ -67,7 +70,6 @@ pub fn verify_light_client_update(encoded_inputs: Vec<u8>) -> Vec<u8> {
         &forks,
     )
     .expect("Finality update failed to verify.");
-
     apply_finality_update(&mut store, &finality_update);
 
     // Ensure the new head is greater than the previous head. This guarantees that the finality
@@ -76,17 +78,22 @@ pub fn verify_light_client_update(encoded_inputs: Vec<u8>) -> Vec<u8> {
         store.finalized_header.beacon().slot > prev_head,
         "New head is not greater than previous head."
     );
-
-    // Sanity check: Ensure that the we used a checkpoint slot for the new finalized header. This is
-    // already verified in the finality update verification, but we double check here to be safe.
+    // Ensure that the we used a checkpoint slot for the new finalized header.
+    // This is required because CL nodes prune non-checkpoint slots,
+    // and if the new head is not a checkpoint slot because it was missed, then we will run into
+    // trouble with future updates if it's not available in the node anymore.
     assert!(
         store.finalized_header.beacon().slot.is_multiple_of(32),
         "New head is not a checkpoint slot."
     );
 
-    // 3. Commit new state root, header, and sync committee.
+    // 3. Commit new state root, header, and sync committees.
     let header: B256 = store.finalized_header.beacon().tree_hash_root();
     let sync_committee_hash: B256 = store.current_sync_committee.tree_hash_root();
+    let next_sync_committee_hash: B256 = match store.next_sync_committee {
+        Some(next_sync_committee) => next_sync_committee.tree_hash_root(),
+        None => B256::ZERO,
+    };
 
     let head = store.finalized_header.beacon().slot;
     let execution = store
@@ -95,14 +102,15 @@ pub fn verify_light_client_update(encoded_inputs: Vec<u8>) -> Vec<u8> {
         .expect("Execution payload doesn't exist.");
 
     let output = Output {
-        executionStateRoot: *execution.state_root(),
-        newHeader: header,
-        executionBlockNumber: U256::from(*execution.block_number()),
-        newHead: U256::from(head),
-        prevHeader: prev_header,
         prevHead: U256::from(prev_head),
-        syncCommitteeHash: sync_committee_hash,
+        prevHeader: prev_header,
         prevSyncCommitteeHash: prev_sync_committee_hash,
+        newHead: U256::from(head),
+        newHeader: header,
+        syncCommitteeHash: sync_committee_hash,
+        nextSyncCommitteeHash: next_sync_committee_hash,
+        executionStateRoot: *execution.state_root(),
+        executionBlockNumber: U256::from(*execution.block_number()),
     };
 
     output.abi_encode()
