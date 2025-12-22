@@ -5,6 +5,10 @@ edition = { workspace = true }
 license = { workspace = true }
 authors = { workspace = true }
 
+[[bin]]
+name = "ethereum-prover"
+path = "src/ethereum-prover.rs"
+
 [build-dependencies]
 sp1-build = { workspace = true }
 
@@ -15,3 +19,9 @@ helios-consensus-core = { workspace = true }
 helios-ethereum       = { workspace = true }
 tokio                 = { workspace = true }
 tree_hash             = { workspace = true }
+clap                  = { workspace = true }
+serde_cbor            = { workspace = true }
+primitives            = { workspace = true }
+sp1-sdk               = { workspace = true }
+hex                   = { workspace = true }
+dotenvy               = { workspace = true }

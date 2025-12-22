@@ -11,8 +11,8 @@ use crate::circuit;
 async fn setup_light_client_circuit_inputs(valid_checkpoint: bool) -> Input {
     dotenvy::dotenv().ok();
 
-    let rpc_url = std::env::var("ETH_MAINNET_BEACON_RPC")
-        .expect("ETH_MAINNET_BEACON_RPC must be set in .env to run this test");
+    let rpc_url = std::env::var("ETH_BEACON_RPC")
+        .expect("ETH_BEACON_RPC must be set in .env to run this test");
 
     let client = get_client(None, &rpc_url, ETHEREUM_MAINNET_CHAIN_ID)
         .await
@@ -59,7 +59,7 @@ async fn setup_light_client_circuit_inputs(valid_checkpoint: bool) -> Input {
 }
 
 #[tokio::test]
-#[ignore = "requires setting ETH_MAINNET_BEACON_RPC in .env"]
+#[ignore = "requires setting ETH_BEACON_RPC in .env"]
 async fn valid_light_client_update() {
     let input = setup_light_client_circuit_inputs(true).await;
 
@@ -69,7 +69,7 @@ async fn valid_light_client_update() {
 }
 
 #[tokio::test]
-#[ignore = "requires setting ETH_MAINNET_BEACON_RPC in .env"]
+#[ignore = "requires setting ETH_BEACON_RPC in .env"]
 #[should_panic(expected = "block is not a finalized checkpoint")]
 async fn invalid_light_client_update_not_checkpoint() {
     let input = setup_light_client_circuit_inputs(false).await;
@@ -80,7 +80,7 @@ async fn invalid_light_client_update_not_checkpoint() {
 }
 
 #[tokio::test]
-#[ignore = "requires setting ETH_MAINNET_BEACON_RPC in .env"]
+#[ignore = "requires setting ETH_BEACON_RPC in .env"]
 #[should_panic(expected = "Finality update failed to verify.: invalid timestamp")]
 async fn invalid_light_client_update_wrong_input_slot() {
     let mut input = setup_light_client_circuit_inputs(true).await;
@@ -94,7 +94,7 @@ async fn invalid_light_client_update_wrong_input_slot() {
 }
 
 #[tokio::test]
-#[ignore = "requires setting ETH_MAINNET_BEACON_RPC in .env"]
+#[ignore = "requires setting ETH_BEACON_RPC in .env"]
 #[should_panic(expected = "Update is invalid!: invalid sync committee signature")]
 async fn invalid_light_client_update_tampered_signature() {
     let mut input = setup_light_client_circuit_inputs(true).await;
@@ -108,7 +108,7 @@ async fn invalid_light_client_update_tampered_signature() {
 }
 
 #[tokio::test]
-#[ignore = "requires setting ETH_MAINNET_BEACON_RPC in .env"]
+#[ignore = "requires setting ETH_BEACON_RPC in .env"]
 #[should_panic(expected = "Update is invalid!: invalid finality proof")]
 async fn invalid_light_client_update_tampered_header() {
     let mut input = setup_light_client_circuit_inputs(true).await;

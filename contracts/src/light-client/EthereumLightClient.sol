@@ -215,14 +215,6 @@ contract EthereumLightClient is OwnableUpgradeable, UUPSUpgradeable, PausableUpg
     }
 
     /**
-     * @notice Returns the latest finalized execution layer block number.
-     * @return The block number of the most recent finalized execution payload.
-     */
-    function latestExecutionBlockNumber() public view returns (uint256) {
-        return latestBlockNumber;
-    }
-
-    /**
      * @notice Calculates the sync committee period for a given slot.
      * @dev Each period spans 8192 slots (~27 hours). The sync committee rotates at period boundaries.
      * @param slot The beacon chain slot number.

@@ -54,8 +54,7 @@ pub fn verify_light_client_update(encoded_inputs: Vec<u8>) -> Vec<u8> {
     let prev_head = store.finalized_header.beacon().slot;
 
     // 1. Verify and apply all generic updates
-    for (index, update) in updates.iter().enumerate() {
-        println!("Verifying update {} of {}.", index + 1, updates.len());
+    for update in updates.iter() {
         verify_update(update, expected_current_slot, &store, genesis_root, &forks)
             .expect("Update is invalid!");
         apply_update(&mut store, update);

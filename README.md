@@ -22,3 +22,21 @@ What it does:
 2. Applies finality updates - Verifies and applies finality proofs to advance the light client's finalized head, confirming the beacon chain has reached consensus on new blocks.
 
 3. Extracts execution layer state - Retrieves the execution state root and block number from the finalized beacon block's execution payload.
+
+## Proving scripts
+
+To run the proving scripts make sure to add the `ETH_BEACON_RPC` and `NETWORK_PRIVATE_KEY` to an .env file in the project root like the `.env.example` provided. The `NETWORK_PRIVATE_KEY` needs to be [funded](https://docs.succinct.xyz/docs/sp1/prover-network/quickstart) with enough `PROVE` tokens on Ethereum Mainnet to pay for the Succint Prover Network proofs. Check 
+
+### Ethereum prover
+
+Generate a proof from a previous slot to the current finalized slot. The starting slot must be a checkpoint slot (multiple of 32):
+
+```bash
+cargo run --release --bin ethereum-prover -- --from-slot <SLOT>
+```
+
+To get the current finalized slot:
+
+```bash
+curl -s "<ETH_BEACON_RPC>/eth/v1/beacon/headers/head" | jq -r '.data.header.message.slot'
+```

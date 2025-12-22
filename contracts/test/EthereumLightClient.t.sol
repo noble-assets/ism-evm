@@ -35,29 +35,27 @@ contract EthereumLightClientTest is Test {
     uint256 constant SOURCE_CHAIN_ID = 1;
 
     // VK of our Helios light client circuit
-    // TODO: Replace with actual program VK once circuit is finalized
-    bytes32 constant PROGRAM_VK = 0x00aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+    bytes32 constant PROGRAM_VK = 0x00a47ee58db34832b07fa846172fbce646c3d63d91554c534c2572149fa0b2c6;
 
     // Initial state - checkpoint from a finalized beacon block
-    // TODO: Replace with actual values from a checkpoint sync
-    uint256 constant INITIAL_SLOT = 10_000_000;
-    bytes32 constant INITIAL_HEADER = 0x1111111111111111111111111111111111111111111111111111111111111111;
-    bytes32 constant INITIAL_STATE_ROOT = 0x2222222222222222222222222222222222222222222222222222222222222222;
-    uint256 constant INITIAL_BLOCK_NUMBER = 21_000_000;
-    bytes32 constant INITIAL_SYNC_COMMITTEE = 0x3333333333333333333333333333333333333333333333333333333333333333;
+    uint256 constant INITIAL_SLOT = 13_295_584;
+    bytes32 constant INITIAL_HEADER = 0x97c775926bc1850b4a3b992c00e5d82af64c4a62c819fc496427701a9daaf279;
+    bytes32 constant INITIAL_STATE_ROOT = 0x13f27a01575771657d2e97cf54a3e72cf1adbe2b88d6a42c4f798ece2274755b;
+    uint256 constant INITIAL_BLOCK_NUMBER = 24_065_210;
+    bytes32 constant INITIAL_SYNC_COMMITTEE = 0x74e7406b0d51ace59849b5ded271f39e44725ca0ed0ca9571650b321a6f9cfb0;
 
     // Expected values after update
-    // TODO: Replace with actual expected values from test proof
-    uint256 constant NEW_SLOT = 10_000_032; // One epoch later (checkpoint slot)
-    bytes32 constant NEW_HEADER = 0x4444444444444444444444444444444444444444444444444444444444444444;
-    bytes32 constant NEW_STATE_ROOT = 0x5555555555555555555555555555555555555555555555555555555555555555;
-    uint256 constant NEW_BLOCK_NUMBER = 21_000_010;
-    bytes32 constant NEW_SYNC_COMMITTEE = 0x3333333333333333333333333333333333333333333333333333333333333333;
-    bytes32 constant NEXT_SYNC_COMMITTEE = bytes32(0);
+    uint256 constant NEW_SLOT = 13_300_864;
+    bytes32 constant NEW_HEADER = 0x932052749e45a1a3470b7ce4f2ed4d584c04e72fba9d3d29d95a06f907097662;
+    bytes32 constant NEW_STATE_ROOT = 0x1cd057aa8fda770eb78b24e3016cf68d575160aaed38f8a2b50e277278ab2de6;
+    uint256 constant NEW_BLOCK_NUMBER = 24_070_463;
+    bytes32 constant NEW_SYNC_COMMITTEE = 0x052ee0fdcb2dfedb68dd2109bffff528eed6bf92572d5d8e2f66dbcc6762de55;
+    bytes32 constant NEXT_SYNC_COMMITTEE = 0xe74e77eba2607523561c539915e71bb4b3d2bdc0a5bc80e15809e9b6c0ca4794;
 
-    // TODO: Replace with actual proof and public values from the Helios circuit prover
-    bytes constant PROOF_PLACEHOLDER = hex"aabbccdd";
-    bytes constant PUBLIC_VALUES_PLACEHOLDER = hex"";
+    bytes constant PROOF =
+        hex"a4594c5922ecbad2832b7ec21d13e7d2130b158d5e91d124984240b36fc753b2f6bdfb25214f97ea97d2c30edaacd5cd9e85c4c86cb41330cc5d7019abbb1b3b99357830049d1fff3f22470d318400f232254fabb8862071e82320fedf80783b63021686168989f5ce4c9c377f12fc87b5bf8e145bfe22302b02f1a4130a5a28ef60f717293ab77ae7b9d2a07bcbc2b2f80dbeceea6d9ac4f02a4b623c8811b8a637e35014aae9dee9a62988b5a38df267f13abf0ca47f75c33e89fc6d29563f8b9eb17e08aff683c71b820e59e0c58aa93bccfb9fa69c5c86d3c702f7a3a06cf558aac612278710fad1e209751495fbbe69ed51b4a87324d452c1f33db55a0c5e19965c";
+    bytes constant PUBLIC_VALUES =
+        hex"0000000000000000000000000000000000000000000000000000000000cadfe097c775926bc1850b4a3b992c00e5d82af64c4a62c819fc496427701a9daaf27974e7406b0d51ace59849b5ded271f39e44725ca0ed0ca9571650b321a6f9cfb00000000000000000000000000000000000000000000000000000000000caf480932052749e45a1a3470b7ce4f2ed4d584c04e72fba9d3d29d95a06f907097662052ee0fdcb2dfedb68dd2109bffff528eed6bf92572d5d8e2f66dbcc6762de55e74e77eba2607523561c539915e71bb4b3d2bdc0a5bc80e15809e9b6c0ca47941cd057aa8fda770eb78b24e3016cf68d575160aaed38f8a2b50e277278ab2de600000000000000000000000000000000000000000000000000000000016f493f";
 
     function setUp() public {
         owner = makeAddr("owner");
@@ -106,7 +104,7 @@ contract EthereumLightClientTest is Test {
 
     function test_Initialize_LatestStateRoot() public view {
         assertEq(lightClient.latestStateRoot(), INITIAL_STATE_ROOT);
-        assertEq(lightClient.latestExecutionBlockNumber(), INITIAL_BLOCK_NUMBER);
+        assertEq(lightClient.latestBlockNumber(), INITIAL_BLOCK_NUMBER);
     }
 
     function test_Initialize_SyncCommitteePeriod() public view {
@@ -198,7 +196,7 @@ contract EthereumLightClientTest is Test {
     function test_Update_Success() public {
         vm.expectEmit(true, true, true, true);
         emit IEthereumLightClient.Updated(NEW_SLOT, NEW_HEADER, NEW_STATE_ROOT, NEW_BLOCK_NUMBER);
-        lightClient.update(PROOF_PLACEHOLDER, PUBLIC_VALUES_PLACEHOLDER);
+        lightClient.update(PROOF, PUBLIC_VALUES);
 
         // Verify state updates
         assertEq(lightClient.latestSlot(), NEW_SLOT);
@@ -206,11 +204,17 @@ contract EthereumLightClientTest is Test {
         assertEq(lightClient.headers(NEW_SLOT), NEW_HEADER);
         assertEq(lightClient.stateRoots(NEW_BLOCK_NUMBER), NEW_STATE_ROOT);
         assertEq(lightClient.latestStateRoot(), NEW_STATE_ROOT);
+        assertEq(lightClient.syncCommittees(lightClient.getSyncCommitteePeriod(NEW_SLOT)), NEW_SYNC_COMMITTEE);
+        assertEq(lightClient.syncCommittees(lightClient.getSyncCommitteePeriod(NEW_SLOT) + 1), NEXT_SYNC_COMMITTEE);
     }
 
     function test_Update_RevertsOnInvalidProof() public {
+        // Corrupt public values to make the proof verification fail
+        bytes memory invalidPublicValues = PUBLIC_VALUES;
+        invalidPublicValues[32] = 0xff;
+
         vm.expectRevert();
-        lightClient.update(PROOF_PLACEHOLDER, PUBLIC_VALUES_PLACEHOLDER);
+        lightClient.update(PROOF, invalidPublicValues);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -269,14 +273,14 @@ contract EthereumLightClientTest is Test {
         assertTrue(lightClient.paused());
 
         vm.expectRevert();
-        lightClient.update(PROOF_PLACEHOLDER, PUBLIC_VALUES_PLACEHOLDER);
+        lightClient.update(PROOF, PUBLIC_VALUES);
 
         // Unpause and verify update works
         vm.prank(owner);
         lightClient.unpause();
         assertFalse(lightClient.paused());
 
-        lightClient.update(PROOF_PLACEHOLDER, PUBLIC_VALUES_PLACEHOLDER);
+        lightClient.update(PROOF, PUBLIC_VALUES);
         assertEq(lightClient.latestSlot(), NEW_SLOT);
     }
 
