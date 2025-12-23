@@ -9,8 +9,8 @@ sol! {
 
     struct Output {
         bytes32 root;
-        bytes32 executionStateRoot;
-        uint64 executionBlockNumber;
+        bytes32 stateRoot;
+        uint64 blockNumber;
     }
 }
 
@@ -42,8 +42,8 @@ pub fn verify_hyperlane_merkle_root(encoded_inputs: Vec<u8>) -> Vec<u8> {
 
     Output {
         root,
-        executionStateRoot: state_sketch.anchor.header().state_root,
-        executionBlockNumber: state_sketch.anchor.header().number,
+        stateRoot: state_sketch.anchor.header().state_root,
+        blockNumber: state_sketch.anchor.header().number,
     }
     .abi_encode()
 }

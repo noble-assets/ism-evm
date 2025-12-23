@@ -40,7 +40,7 @@ async fn valid_root_verification() {
 
     let decoded_output = Output::abi_decode_validate(&output).unwrap();
 
-    assert_eq!(decoded_output.executionBlockNumber, block_number);
+    assert_eq!(decoded_output.blockNumber, block_number);
 }
 
 #[tokio::test(flavor = "multi_thread")]

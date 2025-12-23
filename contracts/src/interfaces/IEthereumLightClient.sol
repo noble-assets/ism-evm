@@ -42,6 +42,9 @@ interface IEthereumLightClient is IVersioned, IVkUpdatable {
     event SyncCommitteeUpdated(uint256 indexed period, bytes32 syncCommitteeHash);
 
     function update(bytes calldata proof, bytes calldata publicValues) external;
+    function headers(uint256 slot) external view returns (bytes32);
+    function stateRoots(uint256 blockNumber) external view returns (bytes32);
+    function syncCommittees(uint256 period) external view returns (bytes32);
     function latestSlot() external view returns (uint256);
     function latestStateRoot() external view returns (bytes32);
     function latestBlockNumber() external view returns (uint256);
