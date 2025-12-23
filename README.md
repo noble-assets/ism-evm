@@ -29,7 +29,7 @@ To run the proving scripts make sure to add the `ETH_BEACON_RPC`, `ETH_EXECUTION
 
 ### Ethereum prover
 
-Generate a proof from a previous slot to the current finalized slot. The starting slot must be a checkpoint slot (multiple of 32):
+Generate a proof from a previous slot to the current finalized slot. The starting slot must be a checkpoint slot (multiple of 32). If a slot is not provided, it will just take the previous slot (current slot - 32).
 
 ```bash
 cargo run --release --bin ethereum-prover -- --from-slot <SLOT>
@@ -39,4 +39,12 @@ To get the current finalized slot:
 
 ```bash
 curl -s "<ETH_BEACON_RPC>/eth/v1/beacon/headers/head" | jq -r '.data.header.message.slot'
+```
+
+### EVM Hyperlane merkle root prover
+
+Generate a proof for a Hyperlane merkle tree root value. The hook contract provided as argument must be one that the circuit proves for. By default we are taking the Ethereum Mainnet hook contract and the latest block, but these can be provided.
+
+```bash
+cargo run --release --bin evm-hyperlane-prover
 ```

@@ -46,20 +46,17 @@ contract EthereumISMTest is Test {
     address public owner;
     address public nonOwner;
 
-    bytes32 constant ISM_VK = 0x00dda6d404c699d329fcfa9bbcfb2ed6d78f0f86975f93906de55799cab50844;
+    bytes32 constant ISM_VK = 0x00365b20d2b06282fb952d075338aebafd24e16bd963be7407c1dc1f5f9b33e9;
 
     uint256 constant SOURCE_CHAIN_ID = 1;
-    uint256 constant INITIAL_SLOT = 13_295_584;
-    bytes32 constant INITIAL_HEADER = 0x97c775926bc1850b4a3b992c00e5d82af64c4a62c819fc496427701a9daaf279;
-    bytes32 constant INITIAL_STATE_ROOT = 0x13f27a01575771657d2e97cf54a3e72cf1adbe2b88d6a42c4f798ece2274755b;
-    uint256 constant INITIAL_BLOCK_NUMBER = 24_065_210;
-    bytes32 constant INITIAL_SYNC_COMMITTEE = 0x74e7406b0d51ace59849b5ded271f39e44725ca0ed0ca9571650b321a6f9cfb0;
+    bytes32 constant INITIAL_STATE_ROOT = 0xb014207e69c0ebe07351db560343461c8c6b35b4b58cbcd88be3b34f5ded0254; // The state root at INITIAL_BLOCK_NUMBER
+    uint256 constant INITIAL_BLOCK_NUMBER = 24_076_150;
 
     bytes constant PROOF =
-        hex"a4594c59104320be971f95dda6e79993a91aa9dc316ae749606563ddb52ffee33c98d366081d2cd0f6f8e49f3a877c7f1b374ab8f17d696b1cb583be697d34ec9efcdb3703f13a11aa1ced2f8db16b963069c546294c6a5af1e1ecabcff03213399bb12423e24689c4c0e4e25b32757516b87b08923736617a64217894f407219a2b4fb1121e1610da3e764c33f6872db884ea4ec6efbd556d689cc34ccd485f2bd6e79e23fc084a583a7f590219aa24a840fe74de0e41d8a206726578dab5741cd5013a24041512d5aab25b587b75f1d3a91ead989ad476ca67c16c9a04cdec6160cd8d224f3ef2473ed470d2856cf964dd5b32218169a02c871c11babb3edc0e164929";
+        hex"a4594c590eab658bda49262f48d0b16440f95d16eacfc53e0ab006a962ed6369fe3eab9b3061b4f0f4dcb423e147579ff466938ab22fe08eb514c3f132c769eb397871741a9f945ef284e2963ccc13be129d1a5b703ad6ac34ae44bb7673e4199648f4b80f159a9273666808ee4b14485d783e46ce61c09a2437f159fec2d8d94a525b1c28b6280ba558317b17023b49208beed70cc0f7b9d19fc314951c73fe63d794650934ae817221e260f9bad01c71b9deef73ccec99df2c6ea803cf20e8a140bcd721a41365e4f0e913155c309e96b46a9f7f9e5ee494fc9ecbf2955c63927aa8bf08298f8f7ebcd8e59dabfa83c89c4552a232ba03d7b1ffcef5569cb0018fe642";
     bytes constant PUBLIC_VALUES =
-        hex"c395f9e844edbf0fc612e47fc80ae96a214aa8ad99b203aefcb6e6636c36954ecc315e740731f2fe08e35cce9f00541742d4e8ca520846681d0c9c32167bbf43000000000000000000000000000000000000000000000000000000000085a9f5";
-    bytes32 constant EXPECTED_ROOT = 0xc395f9e844edbf0fc612e47fc80ae96a214aa8ad99b203aefcb6e6636c36954e;
+        hex"a4f164ed4d13cc1e0b027b7a37eb0bba27cd1590d90c77b2acf40e2f7e0d7d02b014207e69c0ebe07351db560343461c8c6b35b4b58cbcd88be3b34f5ded025400000000000000000000000000000000000000000000000000000000016f5f76";
+    bytes32 constant EXPECTED_ROOT = 0xa4f164ed4d13cc1e0b027b7a37eb0bba27cd1590d90c77b2acf40e2f7e0d7d02;
 
     uint256 constant TREE_DEPTH = 32;
 
@@ -74,11 +71,11 @@ contract EthereumISMTest is Test {
         bytes memory initDataLightClient = abi.encodeWithSelector(
             EthereumLightClient.initialize.selector,
             keccak256(abi.encodePacked("light_client_vk")), // Dummy VK for light client, we won't update the light client
-            INITIAL_SLOT,
-            INITIAL_HEADER,
+            1, // Dummy slot
+            0x0000000000000000000000000000000000000000000000000000000000000001, // Dummy header
             INITIAL_STATE_ROOT,
             INITIAL_BLOCK_NUMBER,
-            INITIAL_SYNC_COMMITTEE,
+            0x0000000000000000000000000000000000000000000000000000000000000001, // Dummy sync committee
             sp1Verifier,
             owner
         );
@@ -237,11 +234,11 @@ contract EthereumISMTest is Test {
         bytes memory initDataLightClient = abi.encodeWithSelector(
             EthereumLightClient.initialize.selector,
             keccak256(abi.encodePacked("light_client_vk")), // Dummy VK for light client, we won't update the light client
-            INITIAL_SLOT,
-            INITIAL_HEADER,
+            1, // Dummy slot
+            0x0000000000000000000000000000000000000000000000000000000000000001, // Dummy header
             keccak256(abi.encodePacked("different_state_root")), // Different state root
             INITIAL_BLOCK_NUMBER,
-            INITIAL_SYNC_COMMITTEE,
+            0x0000000000000000000000000000000000000000000000000000000000000001, // Dummy sync committee
             sp1Verifier,
             owner
         );

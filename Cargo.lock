@@ -7969,18 +7969,22 @@ name = "scripts"
 version = "0.1.0"
 dependencies = [
  "alloy-primitives",
+ "alloy-sol-types",
  "anyhow",
  "clap",
  "dotenvy",
+ "evm-hyperlane-merkle-program",
  "helios-consensus-core",
  "helios-ethereum",
  "hex",
  "primitives",
  "serde_cbor",
  "sp1-build",
+ "sp1-cc-host-executor",
  "sp1-sdk",
  "tokio",
  "tree_hash",
+ "url",
 ]
 
 [[package]]
