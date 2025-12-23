@@ -184,6 +184,6 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
      * @return A string representing the version
      */
     function version() external pure override returns (string memory) {
-        return "1.0.0";
+        return "v1.0.0";
     }
 }
