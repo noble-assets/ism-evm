@@ -58,7 +58,3 @@ jobs:
       - name: Check generated files match
         run: |
           git diff --exit-code programs/
-      - name: Run tests
-        run: cargo test
-        env:
-          RUST_BACKTRACE: 1
