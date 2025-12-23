@@ -1,0 +1,60 @@
+name: SP1 Programs
+on:
+  push:
+    branches: [main]
+    paths:
+      - "programs/**"
+      - "scripts/**"
+      - "primitives/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/sp1.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "programs/**"
+      - "scripts/**"
+      - "utils/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/sp1.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust:
+    name: build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Cache Build artifacts
+        uses: Swatinem/rust-cache@v2.8.2
+        with:
+          cache-on-failure: true
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install SP1
+        run: |
+          curl -L https://sp1up.succinct.xyz | bash
+          echo "$HOME/.sp1/bin" >> $GITHUB_PATH
+      - name: Install SP1 toolchain
+        run: |
+          sp1up
+          cargo prove --version
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Generate ELFs
+        run: cargo check
+
+      - name: Run clippy
+        run: cargo clippy --all-targets
+
+      - name: Check generated files match
+        run: |
+          git diff --exit-code programs/
