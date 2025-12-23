@@ -63,7 +63,7 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
      * @dev Can only be called once due to initializer modifier
      * @param _programVk The SP1 program verification key for the Merkle tree circuit
      * @param verifierAddress Address of the SP1 verifier contract
-     * @param ethereumLightClientAddress Address of the Noble light client contract
+     * @param ethereumLightClientAddress Address of the Ethereum light client contract
      */
     function initialize(bytes32 _programVk, address verifierAddress, address ethereumLightClientAddress)
         public
