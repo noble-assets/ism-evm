@@ -15,9 +15,11 @@ primitives = { path = "primitives" }
 scripts    = { path = "scripts" }
 
 # SP1
-sp1-zkvm  = "5.2.4"
-sp1-sdk   = "5.2.4"
-sp1-build = "5.2.4"
+sp1-zkvm               = "5.2.4"
+sp1-sdk                = "5.2.4"
+sp1-build              = "5.2.4"
+sp1-cc-client-executor = { git = "https://github.com/succinctlabs/sp1-contract-call", tag = "reth-1.9.1c" }
+sp1-cc-host-executor   = { git = "https://github.com/succinctlabs/sp1-contract-call", tag = "reth-1.9.1c" }
 
 # Helios
 helios                = { git = "https://github.com/a16z/helios", tag = "0.11.0" }
@@ -36,6 +38,7 @@ tokio            = "1.48.0"
 anyhow           = "1.0.100"
 clap             = "4.5.53"
 hex              = "0.4.3"
+url              = "2.5.7"
 
 [patch.crates-io] # General
 sha2-v0-9-9      = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", tag = "patch-sha2-0.9.9-sp1-4.0.0" }

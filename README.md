@@ -25,7 +25,7 @@ What it does:
 
 ## Proving scripts
 
-To run the proving scripts make sure to add the `ETH_BEACON_RPC` and `NETWORK_PRIVATE_KEY` to an .env file in the project root like the `.env.example` provided. The `NETWORK_PRIVATE_KEY` needs to be [funded](https://docs.succinct.xyz/docs/sp1/prover-network/quickstart) with enough `PROVE` tokens on Ethereum Mainnet to pay for the Succint Prover Network proofs. Check 
+To run the proving scripts make sure to add the `ETH_BEACON_RPC`, `ETH_EXECUTION_RPC` and `NETWORK_PRIVATE_KEY` to an .env file in the project root like the `.env.example` provided. The `NETWORK_PRIVATE_KEY` needs to be [funded](https://docs.succinct.xyz/docs/sp1/prover-network/quickstart) with enough `PROVE` tokens on Ethereum Mainnet to pay for the Succint Prover Network proofs. Check 
 
 ### Ethereum prover
 
