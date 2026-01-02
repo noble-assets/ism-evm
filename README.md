@@ -13,9 +13,7 @@ Programs will be deterministically compiled and placed in the `/elf` directory i
 
 ### Helios
 
-This program generates zero-knowledge proofs for Ethereum beacon chain light client updates using the Helios consensus library.
-
-What it does:
+Generates ZK proofs for Ethereum beacon chain light client updates using the Helios consensus library.
 
 1. Verifies sync committee updates - Processes any pending sync committee rotation updates, ensuring valid BLS signature verification and proper committee transitions across sync periods.
 
@@ -23,9 +21,19 @@ What it does:
 
 3. Extracts execution layer state - Retrieves the execution state root and block number from the finalized beacon block's execution payload.
 
+### EVM Hyperlane Merkle
+
+Generates ZK proofs for the Hyperlane merkle tree root value of a merkle hook contract.
+
+1. Validates EVM state - Initializes a client executor with the provided state sketch, verifying all storage proofs against the anchor block's state root.
+
+2. Reads merkle hook contract - Executes a `root()` call against the Hyperlane MerkleTreeHook contract (Mainnet or Sepolia) to retrieve the current merkle tree root.
+
+3. Extracts anchoring data - Returns the merkle root, state root, and block number as ABI-encoded output, anchoring the proof to a specific Ethereum state.
+
 ## Proving scripts
 
-To run the proving scripts make sure to add the `ETH_BEACON_RPC`, `ETH_EXECUTION_RPC` and `NETWORK_PRIVATE_KEY` to an .env file in the project root like the `.env.example` provided. The `NETWORK_PRIVATE_KEY` needs to be [funded](https://docs.succinct.xyz/docs/sp1/prover-network/quickstart) with enough `PROVE` tokens on Ethereum Mainnet to pay for the Succint Prover Network proofs. Check
+To run the proving scripts make sure to add the `ETH_BEACON_RPC`, `ETH_EXECUTION_RPC` and `NETWORK_PRIVATE_KEY` to an .env file in the project root like the `.env.example` provided. The `NETWORK_PRIVATE_KEY` needs to be [funded](https://docs.succinct.xyz/docs/sp1/prover-network/quickstart) with enough `PROVE` tokens on Ethereum Mainnet to pay for the Succint Prover Network proofs.
 
 ### Ethereum prover
 
