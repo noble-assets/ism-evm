@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package proto;
+
+// Service for generating ZK proofs
+service Prover {
+  // Generates light client and ISM proofs for a given Ethereum block.
+  rpc EthereumHyperlaneRoot(EthereumHyperlaneRootRequest) returns (EthereumHyperlaneRootResponse);
+}
+
+message EthereumHyperlaneRootRequest {
+  uint64 slot = 1;
+}
+
+message EthereumHyperlaneRootResponse {
+  bytes proof_light_client         = 1;
+  bytes public_inputs_light_client = 2;
+  bytes proof_ism                  = 3;
+  bytes public_inputs_ism          = 4;
+}

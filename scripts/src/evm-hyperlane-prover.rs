@@ -4,11 +4,10 @@ use alloy_primitives::Address;
 use alloy_sol_types::SolType;
 use clap::Parser;
 use evm_hyperlane_merkle_program::circuit::{ETHEREUM_MERKLE_HOOK_CONTRACT, Output, rootCall};
+use primitives::HYPERLANE_MERKLE_ELF;
 use sp1_cc_host_executor::EvmSketch;
-use sp1_sdk::{HashableKey, Prover, ProverClient, SP1Stdin, include_elf, network::NetworkMode};
+use sp1_sdk::{HashableKey, Prover, ProverClient, SP1Stdin, network::NetworkMode};
 use url::Url;
-
-const HYPERLANE_MERKLE_ELF: &[u8] = include_elf!("evm-hyperlane-merkle-program");
 
 #[derive(Parser, Debug)]
 #[command(name = "hyperlane-merkle-prover")]

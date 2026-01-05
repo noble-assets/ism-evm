@@ -2,13 +2,11 @@ use std::time::Instant;
 
 use clap::Parser;
 use helios_ethereum::rpc::ConsensusRpc;
-use primitives::helios::Input;
+use primitives::{ETHEREUM_LIGHT_CLIENT_ELF, helios::Input};
 
 use scripts::light_client::{get_client, get_updates};
-use sp1_sdk::{HashableKey, Prover, ProverClient, SP1Stdin, include_elf, network::NetworkMode};
+use sp1_sdk::{HashableKey, Prover, ProverClient, SP1Stdin, network::NetworkMode};
 use tree_hash::TreeHash;
-
-const ETHEREUM_LIGHT_CLIENT_ELF: &[u8] = include_elf!("helios-program");
 
 #[derive(Parser, Debug)]
 #[command(name = "ethereum-prover")]
