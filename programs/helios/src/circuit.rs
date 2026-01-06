@@ -1,34 +1,10 @@
 use alloy_primitives::{B256, U256};
-use alloy_sol_types::{SolValue, sol};
+use alloy_sol_types::SolValue;
 use helios_consensus_core::{
     apply_finality_update, apply_update, verify_finality_update, verify_update,
 };
-use primitives::helios::Input;
+use primitives::helios::{Input, Output};
 use tree_hash::TreeHash;
-
-sol! {
-    struct Output {
-        /// The slot of the previous head.
-        uint256 prevHead;
-        /// The previous beacon block header hash.
-        bytes32 prevHeader;
-        /// The anchor sync committee hash which was used to verify the proof.
-        bytes32 prevSyncCommitteeHash;
-        /// The slot of the new head.
-        uint256 newHead;
-        /// The new beacon block header hash.
-        bytes32 newHeader;
-        /// The sync committee hash of the current period.
-        bytes32 syncCommitteeHash;
-        /// The sync committee hash of the next period.
-        bytes32 nextSyncCommitteeHash;
-        /// The execution state root from the execution payload of the new beacon block.
-        bytes32 executionStateRoot;
-        /// The execution block number.
-        uint256 executionBlockNumber;
-
-    }
-}
 
 /// Program flow:
 /// 1. Apply sync committee updates, if any

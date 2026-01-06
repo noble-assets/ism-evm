@@ -1,11 +1,10 @@
 use alloy_primitives::Address;
 use alloy_sol_types::SolType;
+use primitives::hyperlane::{ETHEREUM_MERKLE_HOOK_CONTRACT, Output, rootCall};
 use sp1_cc_host_executor::EvmSketch;
 use url::Url;
 
-use crate::circuit::{
-    ETHEREUM_MERKLE_HOOK_CONTRACT, Output, rootCall, verify_hyperlane_merkle_root,
-};
+use crate::circuit::verify_hyperlane_merkle_root;
 
 async fn setup_hyperlane_merkle_circuit_input() -> (Vec<u8>, u64) {
     dotenvy::dotenv().ok();

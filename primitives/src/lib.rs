@@ -1,4 +1,5 @@
 pub mod helios;
+pub mod hyperlane;
 
 pub const ETHEREUM_LIGHT_CLIENT_ELF: &[u8] =
     include_bytes!("../../programs/helios/elf/helios-program");

@@ -3,8 +3,10 @@ use std::time::Instant;
 use alloy_primitives::Address;
 use alloy_sol_types::SolType;
 use clap::Parser;
-use evm_hyperlane_merkle_program::circuit::{ETHEREUM_MERKLE_HOOK_CONTRACT, Output, rootCall};
-use primitives::HYPERLANE_MERKLE_ELF;
+use primitives::{
+    HYPERLANE_MERKLE_ELF,
+    hyperlane::{ETHEREUM_MERKLE_HOOK_CONTRACT, rootCall},
+};
 use sp1_cc_host_executor::EvmSketch;
 use sp1_sdk::{HashableKey, Prover, ProverClient, SP1Stdin, network::NetworkMode};
 use url::Url;
@@ -93,7 +95,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("✓ Proof verified successfully");
 
     // Decode and display output
-    let output = Output::abi_decode_validate(proof.public_values.as_slice())?;
+    let output =
+        primitives::hyperlane::Output::abi_decode_validate(proof.public_values.as_slice())?;
 
     println!("=== Proof Output ===");
     println!("Block number: {}", output.blockNumber);

@@ -32,4 +32,3 @@ sp1-cc-host-executor         = { workspace = true }
 hex                          = { workspace = true }
 dotenvy                      = { workspace = true }
 url                          = { workspace = true }
-evm-hyperlane-merkle-program = { path = "../programs/evm-hyperlane-merkle" }

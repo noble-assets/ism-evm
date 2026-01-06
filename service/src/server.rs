@@ -1,3 +1,4 @@
+use alloy_sol_types::SolValue;
 use tonic::{Request, Response, Status};
 use tracing::{error, info, instrument};
 
@@ -23,32 +24,33 @@ impl ProverService {
 
 #[tonic::async_trait]
 impl Prover for ProverService {
-    #[instrument(skip(self), fields(slot))]
+    #[instrument(skip(self))]
     async fn ethereum_hyperlane_root(
         &self,
-        request: Request<EthereumHyperlaneRootRequest>,
+        _request: Request<EthereumHyperlaneRootRequest>,
     ) -> Result<Response<EthereumHyperlaneRootResponse>, Status> {
-        let slot = request.into_inner().slot;
-        tracing::Span::current().record("slot", slot);
-
         info!("Received proof request");
 
         // Prepare inputs
-        let (lc_input_result, merkle_input_result) = tokio::join!(
-            light_client::prepare_input(
-                slot,
-                &self.config.eth_beacon_rpc,
-                &self.config.eth_execution_rpc,
-                &self.config.light_client_contract,
-                self.config.chain_id
-            ),
-            merkle::prepare_input(slot, &self.config.eth_execution_rpc),
-        );
+        let lc_input_result = light_client::prepare_input(
+            &self.config.eth_beacon_rpc,
+            &self.config.eth_execution_rpc,
+            &self.config.light_client_contract,
+            self.config.chain_id,
+        )
+        .await;
 
-        let lc_input = lc_input_result.map_err(|e| {
+        let (lc_input, block_number) = lc_input_result.map_err(|e| {
             error!(error = %e, "Failed to prepare light client input");
             Status::internal(e.to_string())
         })?;
+
+        let merkle_input_result = merkle::prepare_input(
+            self.config.chain_id,
+            block_number,
+            &self.config.eth_execution_rpc,
+        )
+        .await;
 
         let merkle_input = merkle_input_result.map_err(|e| {
             error!(error = %e, "Failed to prepare merkle input");
@@ -60,23 +62,30 @@ impl Prover for ProverService {
         let (lc_result, merkle_result) =
             tokio::join!(light_client::prove(lc_input), merkle::prove(merkle_input),);
 
-        let (proof_lc, inputs_lc) = lc_result.map_err(|e| {
+        let proof_lc = lc_result.map_err(|e| {
             error!(error = %e, "Light client proof failed");
             Status::internal(e)
         })?;
 
-        let (proof_ism, inputs_ism) = merkle_result.map_err(|e| {
+        let proof_ism = merkle_result.map_err(|e| {
             error!(error = %e, "Hyperlane merkle proof failed");
             Status::internal(e)
         })?;
-
         info!("Proof generation complete");
 
+        // Extract the hyperlane root from the merkle public inputs to return it in the response
+        // Safe to unwrap as the proof generation would have failed otherwise
+        let output =
+            primitives::hyperlane::Output::abi_decode_validate(proof_ism.public_values.as_slice())
+                .unwrap();
+        let hyperlane_root = output.root.to_vec();
+
         Ok(Response::new(EthereumHyperlaneRootResponse {
-            proof_light_client: proof_lc,
-            public_inputs_light_client: inputs_lc,
-            proof_ism,
-            public_inputs_ism: inputs_ism,
+            proof_light_client: proof_lc.bytes().to_vec(),
+            public_values_light_client: proof_lc.public_values.to_vec(),
+            proof_ism: proof_ism.bytes().to_vec(),
+            public_values_ism: proof_ism.public_values.to_vec(),
+            hyperlane_root,
         }))
     }
 }

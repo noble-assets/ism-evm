@@ -2,9 +2,9 @@ mod config;
 mod prover;
 mod server;
 
+use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
-use tonic::transport::Server;
 
 use config::Config;
 use server::{ProverService, proto::prover_server::ProverServer};
@@ -17,14 +17,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "error".parse().unwrap())
-                .add_directive("service=info".parse()?),
+                .unwrap_or_else(|_| "error,prover_service=info".parse().unwrap()),
         )
         .json()
         .init();
 
     let config = Config::from_env();
-    let addr = format!("0.0.0.0:{}", config.grpc_port).parse()?;
+    let addr = format!("0.0.0.0:{}", config.port).parse()?;
     let service = ProverService::new(config);
 
     info!(%addr, "Prover service starting");

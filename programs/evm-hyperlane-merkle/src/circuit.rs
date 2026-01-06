@@ -1,23 +1,9 @@
-use alloy_primitives::{Address, B256, address};
-use alloy_sol_types::{SolValue, sol};
+use alloy_primitives::{Address, B256};
+use alloy_sol_types::SolValue;
+use primitives::hyperlane::{
+    ETHEREUM_MERKLE_HOOK_CONTRACT, Output, SEPOLIA_MERKLE_HOOK_CONTRACT, rootCall
+};
 use sp1_cc_client_executor::{ClientExecutor, ContractInput, Genesis, io::EvmSketchInput};
-
-sol! {
-    function root() public view returns (bytes32) {
-        return _tree.root();
-    }
-
-    struct Output {
-        bytes32 root;
-        bytes32 stateRoot;
-        uint64 blockNumber;
-    }
-}
-
-pub const ETHEREUM_MERKLE_HOOK_CONTRACT: Address =
-    address!("0x48e6c30B97748d1e2e03bf3e9FbE3890ca5f8CCA");
-pub const SEPOLIA_MERKLE_HOOK_CONTRACT: Address =
-    address!("0x4917a9746A7B6E0A57159cCb7F5a6744247f2d0d");
 
 pub fn verify_hyperlane_merkle_root(encoded_inputs: Vec<u8>) -> Vec<u8> {
     // Decode the inputs
