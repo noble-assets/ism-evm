@@ -7,6 +7,7 @@ pub struct Config {
     pub chain_id: u64,
     pub light_client_contract: Address,
     pub port: String,
+    pub api_key: String,
 }
 
 impl Config {
@@ -27,6 +28,7 @@ impl Config {
                 .parse()
                 .expect("LIGHT_CLIENT_CONTRACT must be a valid address"),
             port: std::env::var("PORT").unwrap_or_else(|_| "50051".to_string()),
+            api_key: std::env::var("API_KEY").expect("API_KEY must be set"),
         }
     }
 }

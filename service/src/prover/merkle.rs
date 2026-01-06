@@ -20,7 +20,7 @@ pub async fn prepare_input(
     info!("Preparing merkle input");
     let mut sketch = EvmSketch::builder()
         .at_block(block_number)
-        .el_rpc_url(Url::parse(&execution_rpc).unwrap());
+        .el_rpc_url(Url::parse(execution_rpc).unwrap());
 
     let hook_contract = match chain_id {
         1 => ETHEREUM_MERKLE_HOOK_CONTRACT,

@@ -12,7 +12,7 @@ sol! {
         bytes32 stateRoot;
         uint64 blockNumber;
     }
-    
+
     function root() public view returns (bytes32) {
         return _tree.root();
     }

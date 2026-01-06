@@ -1,7 +1,7 @@
 use alloy_primitives::{Address, B256};
 use alloy_sol_types::SolValue;
 use primitives::hyperlane::{
-    ETHEREUM_MERKLE_HOOK_CONTRACT, Output, SEPOLIA_MERKLE_HOOK_CONTRACT, rootCall
+    ETHEREUM_MERKLE_HOOK_CONTRACT, Output, SEPOLIA_MERKLE_HOOK_CONTRACT, rootCall,
 };
 use sp1_cc_client_executor::{ClientExecutor, ContractInput, Genesis, io::EvmSketchInput};
 

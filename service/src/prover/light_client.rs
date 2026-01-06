@@ -2,7 +2,9 @@ use alloy::{providers::ProviderBuilder, sol};
 use alloy_primitives::Address;
 use helios_ethereum::rpc::ConsensusRpc;
 use scripts::light_client::{get_client, get_updates};
-use sp1_sdk::{HashableKey, Prover, ProverClient, SP1ProofWithPublicValues, SP1Stdin, network::NetworkMode};
+use sp1_sdk::{
+    HashableKey, Prover, ProverClient, SP1ProofWithPublicValues, SP1Stdin, network::NetworkMode,
+};
 use tracing::{info, instrument};
 
 use primitives::{ETHEREUM_LIGHT_CLIENT_ELF, helios::Input};
@@ -40,7 +42,7 @@ pub async fn prepare_input(
     // Get latest finality update
     let finality_update = client.rpc.get_finality_update().await?;
     let target_slot = finality_update.finalized_header().beacon().slot;
-    
+
     // Get the block number as well
     let block_number = *finality_update
         .finalized_header()

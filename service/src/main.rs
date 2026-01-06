@@ -1,3 +1,4 @@
+mod auth;
 mod config;
 mod prover;
 mod server;
@@ -6,6 +7,7 @@ use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
+use auth::AuthInterceptor;
 use config::Config;
 use server::{ProverService, proto::prover_server::ProverServer};
 
@@ -23,13 +25,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     let config = Config::from_env();
+    let auth = AuthInterceptor::new(config.api_key.clone());
     let addr = format!("0.0.0.0:{}", config.port).parse()?;
     let service = ProverService::new(config);
 
     info!(%addr, "Prover service starting");
 
     Server::builder()
-        .add_service(ProverServer::new(service))
+        .add_service(ProverServer::with_interceptor(service, auth))
         .serve_with_shutdown(addr, async {
             tokio::signal::ctrl_c().await.ok();
             info!("Shutting down");
