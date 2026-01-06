@@ -2,9 +2,7 @@ use alloy::{providers::ProviderBuilder, sol};
 use alloy_primitives::Address;
 use helios_ethereum::rpc::ConsensusRpc;
 use scripts::light_client::{get_client, get_updates};
-use sp1_sdk::{
-    HashableKey, Prover, ProverClient, SP1ProofWithPublicValues, SP1Stdin, network::NetworkMode,
-};
+use sp1_sdk::{Prover, ProverClient, SP1ProofWithPublicValues, SP1Stdin, network::NetworkMode};
 use tracing::{info, instrument};
 
 use primitives::{ETHEREUM_LIGHT_CLIENT_ELF, helios::Input};
@@ -94,17 +92,12 @@ pub async fn prove(input: Vec<u8>) -> Result<SP1ProofWithPublicValues, String> {
         let mut stdin = SP1Stdin::new();
         stdin.write_vec(input);
 
-        let (pk, vk) = prover_client.setup(ETHEREUM_LIGHT_CLIENT_ELF);
-        info!(vk = %vk.bytes32(), "Verification key");
+        let (pk, _) = prover_client.setup(ETHEREUM_LIGHT_CLIENT_ELF);
 
         let proof = prover_client
             .prove(&pk, &stdin)
             .groth16()
             .run()
-            .map_err(|e| e.to_string())?;
-
-        prover_client
-            .verify(&proof, &vk)
             .map_err(|e| e.to_string())?;
 
         info!("Light client proof complete");

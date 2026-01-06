@@ -1,0 +1,9 @@
+.vscode/
+contracts/
+target/
+.git/
+.gitignore
+.env
+*.md
+Dockerfile
+.dockerignore

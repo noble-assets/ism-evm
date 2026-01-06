@@ -1,9 +1,7 @@
 use alloy::transports::http::reqwest::Url;
 use alloy_primitives::Address;
 use sp1_cc_host_executor::{EvmSketch, Genesis};
-use sp1_sdk::{
-    HashableKey, Prover, ProverClient, SP1ProofWithPublicValues, SP1Stdin, network::NetworkMode,
-};
+use sp1_sdk::{Prover, ProverClient, SP1ProofWithPublicValues, SP1Stdin, network::NetworkMode};
 use tracing::{info, instrument};
 
 use primitives::{
@@ -59,17 +57,12 @@ pub async fn prove(input: Vec<u8>) -> Result<SP1ProofWithPublicValues, String> {
         let mut stdin = SP1Stdin::new();
         stdin.write_vec(input);
 
-        let (pk, vk) = prover_client.setup(HYPERLANE_MERKLE_ELF);
-        info!(vk = %vk.bytes32(), "Verification key");
+        let (pk, _) = prover_client.setup(HYPERLANE_MERKLE_ELF);
 
         let proof = prover_client
             .prove(&pk, &stdin)
             .groth16()
             .run()
-            .map_err(|e| e.to_string())?;
-
-        prover_client
-            .verify(&proof, &vk)
             .map_err(|e| e.to_string())?;
 
         info!("Merkle proof complete");
