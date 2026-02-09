@@ -25,6 +25,8 @@ interface IEthereumLightClient is IVersioned, IVkUpdatable {
     error InvalidHeader();
     error InvalidSyncCommittee();
     error SyncCommitteeMismatch(bytes32 expected, bytes32 actual);
+    error HeaderAlreadySet();
+    error StateRootAlreadySet();
 
     struct CircuitOutput {
         uint256 prevHead;
@@ -39,6 +41,7 @@ interface IEthereumLightClient is IVersioned, IVkUpdatable {
     }
 
     event Updated(uint256 indexed newHead, bytes32 newHeader, bytes32 executionStateRoot, uint256 executionBlockNumber);
+    event UpdateSkipped(uint256 slot, uint256 blockNumber);
     event SyncCommitteeUpdated(uint256 indexed period, bytes32 syncCommitteeHash);
 
     function update(bytes calldata proof, bytes calldata publicValues) external;

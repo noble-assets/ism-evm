@@ -208,6 +208,16 @@ contract EthereumLightClientTest is Test {
         assertEq(lightClient.syncCommittees(lightClient.getSyncCommitteePeriod(NEW_SLOT) + 1), NEXT_SYNC_COMMITTEE);
     }
 
+    function test_Update_Skipped() public {
+        // First update to set the state to NEW_SLOT
+        lightClient.update(PROOF, PUBLIC_VALUES);
+
+        // Attempt to update with the same proof again, which should be skipped
+        vm.expectEmit(true, true, true, true);
+        emit IEthereumLightClient.UpdateSkipped(NEW_SLOT, NEW_BLOCK_NUMBER);
+        lightClient.update(PROOF, PUBLIC_VALUES);
+    }
+
     function test_Update_RevertsOnInvalidProof() public {
         // Corrupt public values to make the proof verification fail
         bytes memory invalidPublicValues = PUBLIC_VALUES;

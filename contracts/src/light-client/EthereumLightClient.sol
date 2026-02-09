@@ -159,9 +159,31 @@ contract EthereumLightClient is OwnableUpgradeable, UUPSUpgradeable, PausableUpg
             revert InvalidSyncCommittee();
         }
 
-        // Update the light client state
+        // Check existing values
+        bytes32 existingHeader = headers[output.newHead];
+        bytes32 existingStateRoot = stateRoots[output.executionBlockNumber];
+
+        bool headerExists = existingHeader != bytes32(0);
+        bool stateRootExists = existingStateRoot != bytes32(0);
+
+        // If either exists, validate they match
+        if (headerExists && existingHeader != output.newHeader) {
+            revert HeaderAlreadySet();
+        }
+        if (stateRootExists && existingStateRoot != output.executionStateRoot) {
+            revert StateRootAlreadySet();
+        }
+
+        // If both exist and match, skip the update
+        if (headerExists && stateRootExists) {
+            emit UpdateSkipped(output.newHead, output.executionBlockNumber);
+            return;
+        }
+
+        // Proceed with update
         headers[output.newHead] = output.newHeader;
         stateRoots[output.executionBlockNumber] = output.executionStateRoot;
+
         // Update latest slot and block number if necessary
         if (output.newHead > latestSlot) {
             latestSlot = output.newHead;
