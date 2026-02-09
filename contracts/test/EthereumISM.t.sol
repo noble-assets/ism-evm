@@ -156,7 +156,7 @@ contract EthereumISMTest is Test {
 
         // Now update should succeed
         vm.expectEmit(true, true, true, true);
-        emit IEthereumISM.Updated(EXPECTED_ROOT);
+        emit IEthereumISM.Updated(EXPECTED_ROOT, uint64(INITIAL_BLOCK_NUMBER), INITIAL_STATE_ROOT);
         ethereumIsm.update(PROOF, PUBLIC_VALUES);
     }
 
@@ -198,7 +198,7 @@ contract EthereumISMTest is Test {
 
     function test_Update_Success() public {
         vm.expectEmit(true, true, true, true);
-        emit IEthereumISM.Updated(EXPECTED_ROOT);
+        emit IEthereumISM.Updated(EXPECTED_ROOT, uint64(INITIAL_BLOCK_NUMBER), INITIAL_STATE_ROOT);
         ethereumIsm.update(PROOF, PUBLIC_VALUES);
         assertTrue(ethereumIsm.validRoots(EXPECTED_ROOT));
     }

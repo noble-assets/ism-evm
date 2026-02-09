@@ -24,8 +24,10 @@ interface IEthereumISM is IInterchainSecurityModule, IVersioned, IVkUpdatable {
     /**
      * @notice Emitted when a new Merkle tree root is verified and added to the valid roots set.
      * @param root The Merkle tree hook root that was verified.
+     * @param blockNumber The Ethereum block number at which the root was proven.
+     * @param stateRoot The Ethereum execution layer state root at the given block.
      */
-    event Updated(bytes32 root);
+    event Updated(bytes32 root, uint64 blockNumber, bytes32 stateRoot);
 
     /**
      * @notice Output structure from the Merkle tree verification circuit.

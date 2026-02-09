@@ -84,7 +84,7 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
         // Mark this Merkle hook root as valid for message verification
         validRoots[output.root] = true;
 
-        emit Updated(output.root);
+        emit Updated(output.root, output.blockNumber, output.stateRoot);
     }
 
     /// @inheritdoc IEthereumISM
