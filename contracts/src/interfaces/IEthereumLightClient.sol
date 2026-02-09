@@ -1,33 +1,52 @@
-/*
- * Copyright 2025 NASD Inc. All rights reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-pragma solidity >=0.8.0;
+// SPDX-License-Identifier: Apache-2.0
+pragma solidity >=0.8.20;
 
 import {IVersioned} from "./IVersioned.sol";
 import {IVkUpdatable} from "./IVkUpdatable.sol";
 
+/**
+ * @title IEthereumLightClient
+ * @notice Interface for a ZK-verified Ethereum light client that tracks consensus and execution layer state.
+ * @dev This light client verifies Ethereum beacon chain headers and execution state roots using zero-knowledge
+ *      proofs. It maintains a chain of finalized headers verified through sync committee signatures and enables
+ *      trustless cross-chain verification of Ethereum state.
+ */
 interface IEthereumLightClient is IVersioned, IVkUpdatable {
+    /// @notice Thrown when an invalid address (e.g., zero address) is provided.
     error InvalidAddress();
+
+    /// @notice Thrown when a header does not match the expected value.
     error InvalidHeader();
+
+    /// @notice Thrown when a sync committee is invalid or not found.
     error InvalidSyncCommittee();
+
+    /**
+     * @notice Thrown when a sync committee hash does not match the expected value.
+     * @param expected The expected sync committee hash.
+     * @param actual The actual sync committee hash provided.
+     */
     error SyncCommitteeMismatch(bytes32 expected, bytes32 actual);
+
+    /// @notice Thrown when attempting to overwrite an existing header with a different value.
     error HeaderAlreadySet();
+
+    /// @notice Thrown when attempting to overwrite an existing state root with a different value.
     error StateRootAlreadySet();
 
+    /**
+     * @notice Output structure from the ZK light client circuit.
+     * @dev This struct contains all the information needed to verify and update the light client state.
+     * @param prevHead The beacon chain slot of the previous finalized header.
+     * @param prevHeader The beacon block header hash at the previous slot.
+     * @param prevSyncCommitteeHash The sync committee hash for the period containing the previous slot.
+     * @param newHead The beacon chain slot of the new finalized header.
+     * @param newHeader The beacon block header hash at the new slot.
+     * @param syncCommitteeHash The sync committee hash for the period containing the new slot.
+     * @param nextSyncCommitteeHash The sync committee hash for the next period (zero if not available).
+     * @param executionStateRoot The execution layer state root at the new finalized block.
+     * @param executionBlockNumber The execution layer block number corresponding to the new slot.
+     */
     struct CircuitOutput {
         uint256 prevHead;
         bytes32 prevHeader;
@@ -40,17 +59,92 @@ interface IEthereumLightClient is IVersioned, IVkUpdatable {
         uint256 executionBlockNumber;
     }
 
+    /**
+     * @notice Emitted when the light client state is successfully updated.
+     * @param newHead The beacon chain slot of the new finalized header.
+     * @param newHeader The beacon block header hash at the new slot.
+     * @param executionStateRoot The execution layer state root at the new block.
+     * @param executionBlockNumber The execution layer block number.
+     */
     event Updated(uint256 indexed newHead, bytes32 newHeader, bytes32 executionStateRoot, uint256 executionBlockNumber);
+
+    /**
+     * @notice Emitted when an update is skipped because the header and state root are already set.
+     * @dev This occurs when the same valid proof is submitted multiple times.
+     * @param slot The beacon chain slot that was already updated.
+     * @param blockNumber The execution block number that was already updated.
+     */
     event UpdateSkipped(uint256 slot, uint256 blockNumber);
+
+    /**
+     * @notice Emitted when a sync committee is updated for a new period.
+     * @param period The sync committee period index.
+     * @param syncCommitteeHash The tree hash root of the sync committee's public keys.
+     */
     event SyncCommitteeUpdated(uint256 indexed period, bytes32 syncCommitteeHash);
 
+    /**
+     * @notice Updates the light client state with a new finalized header and state root.
+     * @dev Verifies a zero-knowledge proof attesting to a valid light client state transition.
+     *      The proof must chain from a previously verified header and sync committee.
+     *      Headers and state roots are immutable once set - attempting to overwrite with
+     *      different values will revert. Submitting the same proof multiple times is idempotent.
+     * @param proof The SP1 proof bytes generated by the light client circuit.
+     * @param publicValues The ABI-encoded CircuitOutput containing the state transition data.
+     */
     function update(bytes calldata proof, bytes calldata publicValues) external;
+
+    /**
+     * @notice Returns the beacon block header hash for a given slot.
+     * @param slot The beacon chain slot number.
+     * @return The beacon block header hash, or zero if not set.
+     */
     function headers(uint256 slot) external view returns (bytes32);
+
+    /**
+     * @notice Returns the execution state root for a given block number.
+     * @param blockNumber The execution layer block number.
+     * @return The state root hash, or zero if not set.
+     */
     function stateRoots(uint256 blockNumber) external view returns (bytes32);
+
+    /**
+     * @notice Returns the sync committee hash for a given period.
+     * @param period The sync committee period index.
+     * @return The tree hash root of the sync committee's public keys, or zero if not set.
+     */
     function syncCommittees(uint256 period) external view returns (bytes32);
+
+    /**
+     * @notice Returns the latest finalized beacon chain slot.
+     * @return The most recent slot with a verified header.
+     */
     function latestSlot() external view returns (uint256);
+
+    /**
+     * @notice Returns the execution state root for the latest finalized block.
+     * @return The state root hash that can be used for verifying storage proofs.
+     */
     function latestStateRoot() external view returns (bytes32);
+
+    /**
+     * @notice Returns the latest finalized execution block number.
+     * @return The most recent execution block number with a verified state root.
+     */
     function latestBlockNumber() external view returns (uint256);
+
+    /**
+     * @notice Calculates the sync committee period for a given slot.
+     * @dev Each period spans 8192 slots (~27 hours). The sync committee rotates at period boundaries.
+     * @param slot The beacon chain slot number.
+     * @return The sync committee period index.
+     */
     function getSyncCommitteePeriod(uint256 slot) external pure returns (uint256);
+
+    /**
+     * @notice Returns the current epoch based on the latest finalized slot.
+     * @dev Each epoch consists of 32 slots (~6.4 minutes).
+     * @return The current epoch number.
+     */
     function getCurrentEpoch() external view returns (uint256);
 }
