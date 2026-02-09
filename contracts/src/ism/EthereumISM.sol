@@ -79,7 +79,7 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
 
         // Validate that the state root matches the Ethereum light client's state at this block number
         bytes32 expectedStateRoot = ethereumLightClient.stateRoots(output.blockNumber);
-        require(output.stateRoot == expectedStateRoot, InvalidStateRoot());
+        require(expectedStateRoot != bytes32(0) && output.stateRoot == expectedStateRoot, InvalidStateRoot());
 
         // Mark this Merkle hook root as valid for message verification
         validRoots[output.root] = true;

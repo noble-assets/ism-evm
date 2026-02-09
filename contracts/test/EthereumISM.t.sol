@@ -34,7 +34,7 @@ contract EthereumISMTest is Test {
 
     uint256 constant SOURCE_CHAIN_ID = 1;
     bytes32 constant INITIAL_STATE_ROOT = 0x8ba4f9683983d3f77bb3ab2a55c415e655e8b48ec251cac753b7d2ef47df593a; // The state root at INITIAL_BLOCK_NUMBER
-    uint256 constant INITIAL_BLOCK_NUMBER = 24_175_368;
+    uint64 constant INITIAL_BLOCK_NUMBER = 24_175_368;
 
     bytes constant PROOF =
         hex"a4594c5927d0f6a2b252020b0932b5a70e4ecf0d009d8af2f1c2612751ba7a2a9f66cfcd14eb3266d5efa25f3a8dd45961b3b24252d56bc6222c10f6214b76098668af83184f96006c06eb58bcba8be55a16bcdbea443ebe2010c82320a967586920f40b1b1faa2395f73cc0bf0103d6c8f91b7a3b47913ffb426b12d57fbb8c16941616124f3cdccceff24fa05c2c332a30e995289b70531e10f39ca5e16e5e3556cfdf1a1899e2dddc35fca53c94afc49bf161623ef12c639b4a7a8f1d841923a4030a0a9c0a13fe6d5d4a389c2ca5c9cc309eba6b834a1f906647814c9c99f5e79f6e1076c0d043717d44d04c63018b897e1ab72bd19076ae1da07f1948dcdef35232";
@@ -156,7 +156,7 @@ contract EthereumISMTest is Test {
 
         // Now update should succeed
         vm.expectEmit(true, true, true, true);
-        emit IEthereumISM.Updated(EXPECTED_ROOT, uint64(INITIAL_BLOCK_NUMBER), INITIAL_STATE_ROOT);
+        emit IEthereumISM.Updated(EXPECTED_ROOT, INITIAL_BLOCK_NUMBER, INITIAL_STATE_ROOT);
         ethereumIsm.update(PROOF, PUBLIC_VALUES);
     }
 
@@ -198,7 +198,7 @@ contract EthereumISMTest is Test {
 
     function test_Update_Success() public {
         vm.expectEmit(true, true, true, true);
-        emit IEthereumISM.Updated(EXPECTED_ROOT, uint64(INITIAL_BLOCK_NUMBER), INITIAL_STATE_ROOT);
+        emit IEthereumISM.Updated(EXPECTED_ROOT, INITIAL_BLOCK_NUMBER, INITIAL_STATE_ROOT);
         ethereumIsm.update(PROOF, PUBLIC_VALUES);
         assertTrue(ethereumIsm.validRoots(EXPECTED_ROOT));
     }
