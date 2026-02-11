@@ -13,6 +13,10 @@ path = "src/ethereum-prover.rs"
 name = "evm-hyperlane-prover"
 path = "src/evm-hyperlane-prover.rs"
 
+[[bin]]
+name = "bootstrap"
+path = "src/bootstrap.rs"
+
 [build-dependencies]
 sp1-build = { workspace = true }
 
