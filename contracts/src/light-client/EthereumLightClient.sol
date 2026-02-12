@@ -199,7 +199,10 @@ contract EthereumLightClient is OwnableUpgradeable, UUPSUpgradeable, PausableUpg
      */
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-    /// @inheritdoc IEthereumLightClient
+    /**
+     * @notice Returns the execution state root for the latest finalized block.
+     * @return The state root hash that can be used for verifying storage proofs.
+     */
     function latestStateRoot() public view returns (bytes32) {
         return stateRoots[latestBlockNumber];
     }

@@ -4,11 +4,11 @@ pragma solidity 0.8.30;
 import {Script, console} from "forge-std/src/Script.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {EthereumLightClient} from "../src/light-client/EthereumLightClient.sol";
-import {EthereumISM} from "../src/ism/EthereumISM.sol";
+import {EvmISM} from "../src/ism/EvmISM.sol";
 
 /**
  * @title Deploy
- * @notice Deploys the EthereumLightClient and EthereumISM behind UUPS proxies.
+ * @notice Deploys the EthereumLightClient and EvmISM behind UUPS proxies.
  *
  * @dev Required environment variables:
  *   ETHEREUM_LIGHT_CLIENT_VK   - SP1 verification key for the Helios circuit
@@ -77,13 +77,13 @@ contract Deploy is Script {
 
         // ============ ISM ============
 
-        console.log("=== Deploying EthereumISM ===");
+        console.log("=== Deploying EvmISM ===");
 
-        EthereumISM ismImpl = new EthereumISM();
+        EvmISM ismImpl = new EvmISM();
         console.log("  Implementation:", address(ismImpl));
 
         ERC1967Proxy ismProxy = new ERC1967Proxy(
-            address(ismImpl), abi.encodeCall(EthereumISM.initialize, (merkleVk, sp1Verifier, address(lcProxy)))
+            address(ismImpl), abi.encodeCall(EvmISM.initialize, (merkleVk, sp1Verifier, address(lcProxy)))
         );
         console.log("  Proxy:", address(ismProxy));
 
@@ -98,9 +98,9 @@ contract Deploy is Script {
         require(lc.headers(initialSlot) == initialHeader, "header mismatch");
         require(lc.stateRoots(initialBlockNumber) == initialStateRoot, "stateRoot mismatch");
 
-        EthereumISM ism = EthereumISM(address(ismProxy));
+        EvmISM ism = EvmISM(address(ismProxy));
         require(ism.programVk() == merkleVk, "ism programVk mismatch");
-        require(address(ism.ethereumLightClient()) == address(lcProxy), "light client address mismatch");
+        require(address(ism.lightClient()) == address(lcProxy), "light client address mismatch");
         require(address(ism.verifier()) == sp1Verifier, "ism verifier mismatch");
 
         console.log("=== Deployment verified successfully ===");

@@ -3,6 +3,7 @@ pragma solidity >=0.8.20;
 
 import {IVersioned} from "./IVersioned.sol";
 import {IVkUpdatable} from "./IVkUpdatable.sol";
+import {IEvmLightClient} from "./IEvmLightClient.sol";
 
 /**
  * @title IEthereumLightClient
@@ -11,7 +12,7 @@ import {IVkUpdatable} from "./IVkUpdatable.sol";
  *      proofs. It maintains a chain of finalized headers verified through sync committee signatures and enables
  *      trustless cross-chain verification of Ethereum state.
  */
-interface IEthereumLightClient is IVersioned, IVkUpdatable {
+interface IEthereumLightClient is IEvmLightClient, IVersioned, IVkUpdatable {
     /// @notice Thrown when an invalid address (e.g., zero address) is provided.
     error InvalidAddress();
 
@@ -102,13 +103,6 @@ interface IEthereumLightClient is IVersioned, IVkUpdatable {
     function headers(uint256 slot) external view returns (bytes32);
 
     /**
-     * @notice Returns the execution state root for a given block number.
-     * @param blockNumber The execution layer block number.
-     * @return The state root hash, or zero if not set.
-     */
-    function stateRoots(uint256 blockNumber) external view returns (bytes32);
-
-    /**
      * @notice Returns the sync committee hash for a given period.
      * @param period The sync committee period index.
      * @return The tree hash root of the sync committee's public keys, or zero if not set.
@@ -120,18 +114,6 @@ interface IEthereumLightClient is IVersioned, IVkUpdatable {
      * @return The most recent slot with a verified header.
      */
     function latestSlot() external view returns (uint256);
-
-    /**
-     * @notice Returns the execution state root for the latest finalized block.
-     * @return The state root hash that can be used for verifying storage proofs.
-     */
-    function latestStateRoot() external view returns (bytes32);
-
-    /**
-     * @notice Returns the latest finalized execution block number.
-     * @return The most recent execution block number with a verified state root.
-     */
-    function latestBlockNumber() external view returns (uint256);
 
     /**
      * @notice Calculates the sync committee period for a given slot.
