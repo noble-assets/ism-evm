@@ -6,6 +6,10 @@ pub const ETHEREUM_MERKLE_HOOK_CONTRACT: Address =
 pub const SEPOLIA_MERKLE_HOOK_CONTRACT: Address =
     address!("0x4917a9746A7B6E0A57159cCb7F5a6744247f2d0d");
 
+// TODO: update these values once deployed
+pub const NOBLE_DEVNET_CHAIN_ID: u64 = 123;
+pub const NOBLE_DEVNET_MERKLE_HOOK_CONTRACT: Address = address!("0x48e6c30B97748d1e2e03bf3e9FbE3890ca5f8CCA");
+
 sol! {
     struct Output {
         bytes32 root;
