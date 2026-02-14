@@ -16,7 +16,7 @@ interface INobleISM is IInterchainSecurityModule, IVersioned, IVkUpdatable {
     error InvalidTrustedPublicKey();
 
     /// @notice Thrown when the provided BLS12-381 signature does not match the trusted public key.
-    error WrongSigner();
+    error WrongPublicKey();
 
     /// @notice Thrown when the provided signature bytes are not a valid BLS12-381 signature.
     error InvalidSignature();

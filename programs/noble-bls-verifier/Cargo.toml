@@ -1,0 +1,36 @@
+[package]
+name = "noble-bls-verifier"
+authors.workspace = true
+license.workspace = true
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[dependencies]
+# Alloy
+alloy-consensus = "1.6.3"
+alloy-primitives.workspace = true
+alloy-rpc-types-eth = "1.6.3"
+alloy-sol-types.workspace = true
+
+# Commonware
+commonware-consensus = "2026.2.0"
+commonware-cryptography = "2026.2.0"
+commonware-codec = "2026.2.0"
+
+# SP1
+sp1-zkvm.workspace = true
+
+# Transcends
+noble-consensus-application = { path = "../../../transcends/crates/consensus/application" }
+noble-consensus-common = { path = "../../../transcends/crates/consensus/common" }
+noble-dkg = { path = "../../../transcends/crates/consensus/dkg" }
+noble-primitives = { path = "../../../transcends/crates/execution/primitives" }
+
+# General things
+serde.workspace = true
+serde_cbor.workspace = true
+rand = { version = "0.8.5", default-features = false }
+rand_core = "0.6.4"
+commonware-parallel = "2026.2.0"
+eyre = "0.6.12"
