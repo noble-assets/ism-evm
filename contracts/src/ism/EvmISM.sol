@@ -5,30 +5,30 @@ import {OwnableUpgradeable} from "@openzeppelin-contracts-upgradeable/access/Own
 import {UUPSUpgradeable} from "@openzeppelin-contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {PausableUpgradeable} from "@openzeppelin-contracts-upgradeable/utils/PausableUpgradeable.sol";
 import {ISP1Verifier} from "succinctlabs-sp1-contracts/src/ISP1Verifier.sol";
-import {IEthereumISM} from "../interfaces/IEthereumISM.sol";
-import {IEthereumLightClient} from "../interfaces/IEthereumLightClient.sol";
+import {IEvmISM} from "../interfaces/IEvmISM.sol";
+import {IEvmLightClient} from "../interfaces/IEvmLightClient.sol";
 import {IInterchainSecurityModule} from "hyperlane/interfaces/IInterchainSecurityModule.sol";
 import {Message} from "hyperlane/libs/Message.sol";
 import {MerkleLib} from "hyperlane/libs/Merkle.sol";
 
 /**
- * @title EthereumISM
+ * @title EvmISM
  * @author NASD Inc.
  * @notice Hyperlane Interchain Security Module that uses SP1 zk proofs to verify Hyperlane
- *         Merkle tree hook roots from the Ethereum blockchain
- * @dev This EthereumISM verifies messages by:
- *      1. Accepting SP1 proofs of Ethereum's Merkle tree hook roots via update()
+ *         Merkle tree hook roots from an EVM source chain.
+ * @dev This ISM verifies messages by:
+ *      1. Accepting SP1 proofs of the source chain's Merkle tree hook roots via update()
  *      2. Validating Hyperlane messages against these roots via verify(). This will be called by the Hyperlane mailbox.
  */
-contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable, IEthereumISM {
+contract EvmISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable, IEvmISM {
     /// @notice The verification key for the EVM Hyperlane Merkle Tree SP1 program circuit
     bytes32 public programVk;
 
     /// @notice The SP1 verifier contract used to verify the proofs
     ISP1Verifier public verifier;
 
-    /// @notice The Ethereum light client contract for validating app hashes
-    IEthereumLightClient public ethereumLightClient;
+    /// @notice The light client contract for validating source chain state roots
+    IEvmLightClient public lightClient;
 
     /// @notice Mapping of verified Merkle tree roots that can be used for message verification
     /// @dev A root is added when an SP1 proof is successfully verified via update()
@@ -43,16 +43,13 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
     }
 
     /**
-     * @notice Initializes the EthereumISM contract with required addresses and verification key
+     * @notice Initializes the EvmISM contract with required addresses and verification key
      * @dev Can only be called once due to initializer modifier
      * @param _programVk The SP1 program verification key for the Merkle tree circuit
      * @param verifierAddress Address of the SP1 verifier contract
-     * @param ethereumLightClientAddress Address of the Ethereum light client contract
+     * @param lightClientAddress Address of the EVM light client contract
      */
-    function initialize(bytes32 _programVk, address verifierAddress, address ethereumLightClientAddress)
-        public
-        initializer
-    {
+    function initialize(bytes32 _programVk, address verifierAddress, address lightClientAddress) public initializer {
         __Ownable_init(msg.sender);
         __Pausable_init();
 
@@ -60,8 +57,8 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
         require(verifierAddress != address(0), InvalidAddress());
         verifier = ISP1Verifier(verifierAddress);
 
-        require(ethereumLightClientAddress != address(0), InvalidAddress());
-        ethereumLightClient = IEthereumLightClient(ethereumLightClientAddress);
+        require(lightClientAddress != address(0), InvalidAddress());
+        lightClient = IEvmLightClient(lightClientAddress);
     }
 
     /**
@@ -71,14 +68,14 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
      */
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-    /// @inheritdoc IEthereumISM
+    /// @inheritdoc IEvmISM
     function update(bytes calldata proof, bytes calldata publicValues) external override whenNotPaused {
         verifier.verifyProof(programVk, publicValues, proof);
 
         CircuitOutput memory output = abi.decode(publicValues, (CircuitOutput));
 
-        // Validate that the state root matches the Ethereum light client's state at this block number
-        bytes32 expectedStateRoot = ethereumLightClient.stateRoots(output.blockNumber);
+        // Validate that the state root matches the light client's state at this block number
+        bytes32 expectedStateRoot = lightClient.stateRoots(output.blockNumber);
         require(expectedStateRoot != bytes32(0) && output.stateRoot == expectedStateRoot, InvalidStateRoot());
 
         // Mark this Merkle hook root as valid for message verification
@@ -87,7 +84,7 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
         emit Updated(output.root, output.blockNumber, output.stateRoot);
     }
 
-    /// @inheritdoc IEthereumISM
+    /// @inheritdoc IEvmISM
     function verify(bytes calldata _metadata, bytes calldata _message)
         external
         view
@@ -143,7 +140,7 @@ contract EthereumISM is OwnableUpgradeable, UUPSUpgradeable, PausableUpgradeable
     }
 
     /**
-     * @notice Returns the version of the EthereumISM contract
+     * @notice Returns the version of the EvmISM contract
      * @return A string representing the semantic version
      */
     function version() external pure override returns (string memory) {

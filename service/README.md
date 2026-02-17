@@ -6,15 +6,16 @@ gRPC service for generating SP1 Groth16 proofs for Ethereum light client updates
 
 Set the env variables in an .env file like the example provided.
 
-| Variable                | Required | Default | Description                                         |
-| ----------------------- | -------- | ------- | --------------------------------------------------- |
-| `ETH_BEACON_RPC`        | Yes      | -       | Ethereum Beacon Chain RPC endpoint                  |
-| `ETH_EXECUTION_RPC`     | Yes      | -       | Ethereum Execution Layer RPC endpoint               |
-| `NETWORK_PRIVATE_KEY`   | Yes      | -       | Private key for SP1 network prover authentication   |
-| `LIGHT_CLIENT_CONTRACT` | Yes      | -       | Address of the light client contract                |
-| `API_KEY`               | Yes      | -       | API key for authenticating requests to this service |
-| `CHAIN_ID`              | No       | `1`     | Chain ID (1 for Mainnet, 11155111 for Sepolia)      |
-| `PORT`                  | No       | `50051` | gRPC server port                                    |
+| Variable                | Required | Default | Description                                                               |
+| ----------------------- | -------- | ------- | ------------------------------------------------------------------------- |
+| `ETH_BEACON_RPC`        | Yes      | -       | Ethereum Beacon Chain RPC endpoint                                        |
+| `ETH_EXECUTION_RPC`     | Yes      | -       | Ethereum Execution Layer RPC endpoint                                     |
+| `RPC_URL`               | Yes      | -       | RPC Endpoint of the counterparty chain where the light client is deployed |
+| `NETWORK_PRIVATE_KEY`   | Yes      | -       | Private key for SP1 network prover authentication                         |
+| `LIGHT_CLIENT_CONTRACT` | Yes      | -       | Address of the light client contract                                      |
+| `API_KEY`               | Yes      | -       | API key for authenticating requests to this service                       |
+| `CHAIN_ID`              | No       | `1`     | Chain ID (1 for Mainnet, 11155111 for Sepolia)                            |
+| `PORT`                  | No       | `50051` | gRPC server port                                                          |
 
 ## Running the Service
 

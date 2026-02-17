@@ -4,6 +4,7 @@ use alloy_primitives::Address;
 pub struct Config {
     pub eth_beacon_rpc: String,
     pub eth_execution_rpc: String,
+    pub execution_rpc: String,
     pub chain_id: u64,
     pub light_client_contract: Address,
     pub port: String,
@@ -19,6 +20,7 @@ impl Config {
             eth_beacon_rpc: std::env::var("ETH_BEACON_RPC").expect("ETH_BEACON_RPC must be set"),
             eth_execution_rpc: std::env::var("ETH_EXECUTION_RPC")
                 .expect("ETH_EXECUTION_RPC must be set"),
+            execution_rpc: std::env::var("RPC_URL").expect("RPC_URL must be set"),
             chain_id: std::env::var("CHAIN_ID")
                 .unwrap_or_else(|_| "1".to_string())
                 .parse()

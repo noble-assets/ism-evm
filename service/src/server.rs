@@ -35,7 +35,7 @@ impl Prover for ProverService {
         // Prepare inputs
         let lc_input_result = light_client::prepare_input(
             &self.config.eth_beacon_rpc,
-            &self.config.eth_execution_rpc,
+            &self.config.execution_rpc,
             &self.config.light_client_contract,
             self.config.chain_id,
         )
