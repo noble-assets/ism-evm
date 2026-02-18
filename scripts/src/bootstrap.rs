@@ -29,10 +29,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // --- Beacon Chain Checkpoint ---
     let rpc_url = std::env::var("ETH_BEACON_RPC").expect("ETH_BEACON_RPC must be set");
-    let chain_id: u64 = std::env::var("SOURCE_CHAIN_ID")
+    let chain_id: u64 = std::env::var("CHAIN_ID")
         .unwrap_or_else(|_| "1".to_string())
         .parse()
-        .expect("Invalid SOURCE_CHAIN_ID");
+        .expect("Invalid CHAIN_ID");
 
     println!("Fetching finalized checkpoint from beacon chain...");
     let client = get_client(None, &rpc_url, chain_id).await?;
