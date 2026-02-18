@@ -6,14 +6,23 @@ package proto;
 service Prover {
   // Generates light client and ISM proofs for a given Ethereum block.
   rpc EthereumHyperlaneRoot(EthereumHyperlaneRootRequest) returns (EthereumHyperlaneRootResponse);
+  // Generates ISM proofs for a given Noble block.
+  rpc NobleHyperlaneRoot(NobleHyperlaneRootRequest) returns (NobleHyperlaneRootResponse);
 }
 
-message EthereumHyperlaneRootRequest {};
+message EthereumHyperlaneRootRequest {}
 
 message EthereumHyperlaneRootResponse {
-  bytes proof_light_client         = 1;
+  bytes proof_light_client = 1;
   bytes public_values_light_client = 2;
-  bytes proof_ism                  = 3;
-  bytes public_values_ism          = 4;
-  bytes hyperlane_root             = 5;
+  bytes proof_ism = 3;
+  bytes public_values_ism = 4;
+  bytes hyperlane_root = 5;
+}
+
+message NobleHyperlaneRootRequest {}
+
+message NobleHyperlaneRootResponse {
+  // The Hyperlane Merkle Tree root.
+  bytes hyperlane_root = 1;
 }

@@ -4,6 +4,7 @@ use tracing::{error, info, instrument};
 
 use crate::config::Config;
 use crate::prover::{light_client, merkle};
+use crate::server::proto::{NobleHyperlaneRootRequest, NobleHyperlaneRootResponse};
 
 pub mod proto {
     tonic::include_proto!("proto");
@@ -87,5 +88,12 @@ impl Prover for ProverService {
             public_values_ism: proof_ism.public_values.to_vec(),
             hyperlane_root,
         }))
+    }
+
+    // This function serves the endpoint to generate the corresponding Hyperlane Merke root proof
+    // for the Noble EVM. It is using the same methods as the Ethereum endpoint above, but does not
+    // require running the light client proof.
+    async fn noble_hyperlane_root(&self, _request: Request<NobleHyperlaneRootRequest>) -> Result<Response<NobleHyperlaneRootResponse>, Status> {
+        todo!("implement me!")
     }
 }

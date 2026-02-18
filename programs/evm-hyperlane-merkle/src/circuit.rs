@@ -1,17 +1,24 @@
 use alloy_primitives::{Address, B256};
 use alloy_sol_types::SolValue;
 use primitives::hyperlane::{
-    ETHEREUM_MERKLE_HOOK_CONTRACT, Output, SEPOLIA_MERKLE_HOOK_CONTRACT, rootCall,
+    ETHEREUM_MERKLE_HOOK_CONTRACT, NOBLE_DEVNET_CHAIN_ID, NOBLE_DEVNET_MERKLE_HOOK_CONTRACT, Output, SEPOLIA_MERKLE_HOOK_CONTRACT, rootCall
 };
 use sp1_cc_client_executor::{ClientExecutor, ContractInput, Genesis, io::EvmSketchInput};
 
-pub fn verify_hyperlane_merkle_root(encoded_inputs: Vec<u8>) -> Vec<u8> {
-    // Decode the inputs
-    let state_sketch: EvmSketchInput = serde_cbor::from_slice(&encoded_inputs).unwrap();
-
-    let hook_contract = match state_sketch.genesis {
+/// This function is "client" implementation for the contract call proof, as detailed
+/// in SP1's docs at https://succinctlabs.github.io/sp1-contract-call.
+/// 
+/// The `EVMSketchInput` is created from the prepared inputs that are provided in
+/// the "host" implementation, and then replicates the same call that was also made
+/// to the actual RPC endpoint.
+pub fn verify_hyperlane_merkle_root(state_sketch: &EvmSketchInput) -> Output {
+    let hook_contract = match &state_sketch.genesis {
         Genesis::Mainnet => ETHEREUM_MERKLE_HOOK_CONTRACT,
         Genesis::Sepolia => SEPOLIA_MERKLE_HOOK_CONTRACT,
+        Genesis::Custom(cc) => match cc.chain_id {
+            NOBLE_DEVNET_CHAIN_ID => NOBLE_DEVNET_MERKLE_HOOK_CONTRACT,
+            _ => unimplemented!("unknown chain ID for custom genesis"),
+        },
         _ => unimplemented!(),
     };
 
@@ -31,5 +38,4 @@ pub fn verify_hyperlane_merkle_root(encoded_inputs: Vec<u8>) -> Vec<u8> {
         stateRoot: state_sketch.anchor.header().state_root,
         blockNumber: state_sketch.anchor.header().number,
     }
-    .abi_encode()
 }
